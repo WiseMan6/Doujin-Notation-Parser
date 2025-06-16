@@ -1,0 +1,1 @@
+Doujin Notation refers to ambiguous naming conventions often seen as `(Head) [Circle (Artist & Artist #2)] Title (tail) [tail2] {tail3}`, where each block (either plain text or typed scope) and its position corresponds to specific metadata.
