@@ -1,11 +1,13 @@
 /** biome-ignore-all lint/suspicious/noAssignInExpressions: <explanation> */
 
+// dprint-ignore
 const GRAMMAR = new Set([
   40, 41,   // ()
   91, 93,   // []
   123, 125, // {}
 ]);
 
+// dprint-ignore
 const Types = {
   OPEN_BARE: 100,    // `(`
   CLOSE_BARE: 101,   // `)`
@@ -38,14 +40,14 @@ export interface Metadata {
   Circles?: string[];
   Head?: string[];
   Tail?: Array<{
-    type: ScopeType,
-    value: string
+    type: ScopeType;
+    value: string;
   }>;
 }
 
 type Span = {
-  readonly start: number,
-  readonly end: number
+  readonly start: number;
+  readonly end: number;
 };
 
 interface Token {
@@ -58,7 +60,6 @@ interface Node extends Token {
   // readonly unsafe?: boolean;
 }
 
-
 class Tokenizer {
   private readonly source: string;
   private position = 0;
@@ -67,6 +68,7 @@ class Tokenizer {
     this.source = source;
   }
 
+  // dprint-ignore
   tokenize(): Token[] {
     const tokens: Token[] = [];
 
@@ -95,8 +97,8 @@ class Tokenizer {
       type,
       span: {
         start,
-        end: start + 1
-      }
+        end: start + 1,
+      },
     };
   }
 
@@ -161,8 +163,8 @@ function parse(tokens: Token[], start = 0, end = tokens.length): Node[] {
           children: parse(tokens, i + 1, j - 1),
           span: {
             start: token.span.start,
-            end: tokens[j - 1].span.end
-          }
+            end: tokens[j - 1].span.end,
+          },
         });
         i = j;
       } else {
@@ -186,7 +188,7 @@ function parse(tokens: Token[], start = 0, end = tokens.length): Node[] {
   return nodes;
 }
 
-function transform(source: string, start = 0, end: number): string[] {
+function transform(source: string, start: number, end: number): string[] {
   const names: string[] = [];
 
   for (let i = start; i < end; i++) {
@@ -256,13 +258,17 @@ function parseTitle(nodes: Node[], source: string, end: number): [number, Span] 
       }
     }
 
-    if (nodes[end + 1]?.type === Types.OPEN_BARE &&
-        source.charCodeAt(nodes[end + 1].span.start - 1) !== 32) {
+    if (
+      nodes[end + 1]?.type === Types.OPEN_BARE &&
+      source.charCodeAt(nodes[end + 1].span.start - 1) !== 32
+    ) {
       end++;
     }
 
-    if (nodes[end + 1]?.type === Types.OPEN_BARE &&
-        isWhitelisted(nodes[end + 1].span, source)) {
+    if (
+      nodes[end + 1]?.type === Types.OPEN_BARE &&
+      isWhitelisted(nodes[end + 1].span, source)
+    ) {
       end++;
     }
   }
@@ -274,9 +280,9 @@ function parseTitle(nodes: Node[], source: string, end: number): [number, Span] 
       end: nodes[end].span.end + Number(
         // Make it more obvious that the title is malformed, e.g.:
         // `Title Series)` is better than just `Title Series`.
-        [41, 93, 125].includes(source.charCodeAt(nodes[end].span.end))
+        [41, 93, 125].includes(source.charCodeAt(nodes[end].span.end)),
       ),
-    }
+    },
   ];
 }
 
@@ -285,15 +291,15 @@ function pushTail(metadata: Metadata, source: string, node: Node): void {
     type: ScopeTypes[node.type],
     value: source.substring(
       node.span.start + 1,
-      node.span.end - 1
-    )
+      node.span.end - 1,
+    ),
   });
 }
 
 export function parseFilename(filename: string): Metadata {
   const source = filename.trim();
   const metadata: Metadata = {
-    Title: source
+    Title: source,
   };
 
   const tokens = new Tokenizer(source).tokenize();
@@ -352,7 +358,7 @@ export function parseFilename(filename: string): Metadata {
         }
 
         if (titleParsed) {
-          pushTail(/* MUT */metadata, source, node);
+          pushTail(/* MUT */ metadata, source, node);
         }
         break;
       }
@@ -388,7 +394,7 @@ export function parseFilename(filename: string): Metadata {
               //   continue;
               // }
 
-              // `bar` in `foo (bar)`
+              // `bar` in `foo (optional) (bar)`
               metadata.Artists = transform(source, lastChild.span.start + 1, lastChild.span.end - 1);
               // `foo (optional)` sequence in `foo (optional) (bar)`
               metadata.Circles = transform(source, firstChild.span.start, lastCircle.span.end);
@@ -403,14 +409,14 @@ export function parseFilename(filename: string): Metadata {
         }
 
         if (titleParsed) {
-          pushTail(/* MUT */metadata, source, node);
+          pushTail(/* MUT */ metadata, source, node);
         }
         break;
       }
 
       case Types.OPEN_CURLY: {
         if (titleParsed) {
-          pushTail(/* MUT */metadata, source, node);
+          pushTail(/* MUT */ metadata, source, node);
         }
         break;
       }
