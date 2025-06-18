@@ -26,14 +26,6 @@ describe("FAKKU", () => {
             Circles: ["Athome Shuka"]
         });
 
-        expect($("(C91) [wadamemo (WADA Rco)] Fate GO MEMO (Fate/Grand Order)")).toEqual({
-            Title: "Fate GO MEMO",
-            Artists: ["WADA Rco"],
-            Circles: ["wadamemo"],
-            Head: ["C91"],
-            Tail: [bare`Fate/Grand Order`]
-        });
-
         expect($("[Spiritus Tarou] (Pretend) Sleeping Beauty (Comic Bavel 2016-04)")).toEqual({
             Title: "(Pretend) Sleeping Beauty",
             Artists: ["Spiritus Tarou"],
@@ -121,6 +113,13 @@ describe("Sad Panda & Other", () => {
                 square `Chinese`,
                 square `黑锅汉化组`
             ]
+        });
+        expect($("(C91) [wadamemo (WADA Rco)] Fate GO MEMO (Fate/Grand Order)")).toEqual({
+            Title: "Fate GO MEMO",
+            Artists: ["WADA Rco"],
+            Circles: ["wadamemo"],
+            Head: ["C91"],
+            Tail: [bare`Fate/Grand Order`]
         });
         expect($("(CCOsaka107) [Haraheridou (Herio)] Yodooshi Lamretta (Granblue Fantasy) [English] =White Symphony=")).toEqual({
             Title: "Yodooshi Lamretta",
